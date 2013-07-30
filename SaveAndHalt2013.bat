@@ -115,6 +115,11 @@ GOTO WEITER1
 
 
 :DOWN
+echo.
+echo PA Serverdienste starten...
+start /B /D "%papfad%\Backup" SrvUnlock.exe || echo Fehler: SrvUnlock.exe >> %logfile%
+tasklist | find /i "CDRecNG.exe" >nul && echo LZ-Archivierung erfolgreich gestartet. >> %logfile% 
+echo.
 echo Herunterfahren...
 IF "%debug%" == "1" pause
 shutdown /s /f /t 10 /c "Have a nice day!"
