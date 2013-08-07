@@ -21,6 +21,7 @@ rem Bitte anpassen ############################################################
 rem ###########################################################################
 
 rem Pfad und Name zur Logdatei (wird an DV Backup Logdatei angehaengt):
+rem ACHTUNG: Dateinamen mit dem Backup Script des DV Servers abgleichen!
 set logfile=W:\DMPPABackupLog.txt
 
 rem Ist DMP-Assist 5 vorhanden (0 oder 1)?
