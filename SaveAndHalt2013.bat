@@ -9,6 +9,8 @@ rem
 rem Script startet alle mit MS SyncToy erstellten Sync Jobs.
 rem Bitte als Administrator ausfuehren!
 rem
+rem Verbindung zu Laufwerk W: wird vorausgesetzt!
+rem
 rem Speedpoint nG GmbH (FW); Stand: April 2013
 
 
@@ -18,8 +20,8 @@ rem ###########################################################################
 rem Bitte anpassen ############################################################
 rem ###########################################################################
 
-rem Pfad und Name zur Logdatei:
-set logfile=C:\david\Backup-Protokoll.txt
+rem Pfad und Name zur Logdatei (wird an DV Backup Logdatei angehaengt):
+set logfile=W:\DMPPABackupLog.txt
 
 rem Ist DMP-Assist 5 vorhanden (0 oder 1)?
 set dmp5=1
