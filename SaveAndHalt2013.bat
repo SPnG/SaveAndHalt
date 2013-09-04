@@ -1,20 +1,12 @@
 @echo off
 
-
-
-
 rem Script zum Synchronisieren von Daten per Microsoft SyncToy;
 rem Zur Verwendung mit dem Windows Taskplaner;
 rem
 rem Script startet alle mit MS SyncToy erstellten Sync Jobs.
 rem Bitte als Administrator ausfuehren!
 rem
-rem Verbindung zu Laufwerk W: wird vorausgesetzt!
-rem
-rem Speedpoint nG GmbH (FW); Stand: April 2013
-
-
-
+rem Speedpoint nG GmbH (FW,JP,MR); Stand: September 2013
 
 rem ###########################################################################
 rem Bitte anpassen ############################################################
@@ -22,7 +14,8 @@ rem ###########################################################################
 
 rem Pfad und Name zur Logdatei (wird an DV Backup Logdatei angehaengt):
 rem ACHTUNG: Dateinamen mit dem Backup Script des DV Servers abgleichen!
-set logfile=W:\DMPPABackupLog.txt
+set logfile=C:\david\DMPPABackupLog.txt
+set xlog=W:\
 
 rem Ist DMP-Assist 5 vorhanden (0 oder 1)?
 set dmp5=1
@@ -65,6 +58,7 @@ echo ### Backup Start: %date:~0% - %time:~0,8% Uhr >> %logfile%
 REM Pruefung ob DMP-Sicherung und PA-Sicherung ausgeschaltet (falsche Einstellung)
 if "%dmp5%" == "1" goto PRF
 if "%pa%" == "1" goto PRF
+echo DMP und Praxisarchiv nicht eingestellt. Abbruch
 echo DMP und Praxisarchiv nicht eingestellt. Abbruch >> %logfile% && GOTO FERTIG
 
 :PRF
@@ -99,7 +93,6 @@ net use W: /delete /yes >nul
 net use W: \\%dvserver%\Word /persistent:yes >> %logfile% 2>&1
 ping -n 3 127.0.0.1 >nul
 dir W: >nul
-echo cls
 IF "%debug%" == "1" pause
 @cls
 echo.
@@ -118,15 +111,26 @@ GOTO WEITER1
 
 :DOWN
 echo.
+IF "%pa%" == "0" GOTO DMPDOWN
 echo PA Serverdienste starten...
 start /B /D "%papfad%\Backup" SrvUnlock.exe || echo Fehler: SrvUnlock.exe >> %logfile%
 tasklist | find /i "CDRecNG.exe" >nul && echo LZ-Archivierung erfolgreich gestartet. >> %logfile% 
+echo.
+copy "%logfile%" "%xlog%"
 echo.
 echo Herunterfahren...
 IF "%debug%" == "1" pause
 shutdown /s /f /t 10 /c "Have a nice day!"
 exit
 
+:DMPDOWN
+echo.
+copy "%logfile%" "%xlog%"
+echo.
+echo Herunterfahren...
+IF "%debug%" == "1" pause
+shutdown /s /f /t 10 /c "Have a nice day!"
+exit
 
 :WEITER1
 IF "%pa%" == "0" GOTO :DMPSTART
@@ -136,7 +140,7 @@ start /B /D "%papfad%\Backup" SrvUnlock.exe || echo Fehler: SrvUnlock.exe >> %lo
 rem ***** echo Langzeitarchivierung starten...
 rem ***** ping -n 3 127.0.0.1 >nul
 rem ***** start /MIN /D "%papfad%\Common\CDRec" CDRecNG.exe || echo Fehler beim Start der LZ-Archivierung! >> %logfile%
-tasklist | find /i "CDRecNG.exe" >nul && echo LZ-Archivierung erfolgreich gestartet. >> %logfile% 
+tasklist | find /i "CDRecNG.exe" >nul && echo LZ-Archivierung erfolgreich gestartet. >> %logfile%
 IF "%debug%" == "1" pause
 
 
@@ -151,6 +155,7 @@ ping -n 10 127.0.0.1 >nul
 IF "%fail1%" == "1" GOTO DMPFAIL
 IF "%fail2%" == "1" GOTO DMPFAIL
 echo DMP Dienste erfolgreich gestartet. >> %logfile%
+copy "%logfile%" "%xlog%"
 GOTO FERTIG
 
 
@@ -161,12 +166,13 @@ GOTO FERTIG
 
 :FERTIG
 IF "%debug%" == "1" pause
-cls
+@cls
 echo.
 echo Vorgang abeschlossen, Details siehe %logfile%.
 echo.
 echo ### Backup Ende: %date:~0% - %time:~0,8% Uhr >> %logfile%
 echo ------------------------------------------------------------- >> %logfile%
+copy "%logfile%" "%xlog%"
 ping -n 5 127.0.0.1 >nul
 IF "%debug%" == "1" pause
 
